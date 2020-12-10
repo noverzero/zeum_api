@@ -1,6 +1,13 @@
+import { 
+    Resolver,
+    Ctx, 
+    Arg, 
+    Mutation, 
+    InputType, 
+    Field, 
+    ObjectType } from "type-graphql"
 import { User } from "../entities/User"
 import { MyContext } from "src/types"
-import { Resolver, Ctx, Arg, Mutation, InputType, Field, ObjectType } from "type-graphql"
 import argon2 from 'argon2'
 
 @InputType()
@@ -74,7 +81,7 @@ export class UserResolver{
                             field: "username",
                             message: "username already exists"
                         }
-                        ]
+                        ] 
                     }
                 }
                 console.log("message: ", err)
@@ -85,7 +92,7 @@ export class UserResolver{
     @Mutation(() => UserResponse )
     async login(
         @Arg('options')  options: UsernamePasswordInput,
-        @Ctx() {em}: MyContext
+        @Ctx() {em, req}: MyContext
      ): Promise<UserResponse> {
 
             const user = await em.findOne(User, {username: options.username})
@@ -111,11 +118,11 @@ export class UserResolver{
 
                 }
             }
-
+            req.session.userId = user.id;
 
             return {
                 user,
             }
-        }
+        } 
    
 }
